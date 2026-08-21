@@ -61,7 +61,7 @@ class GeneralBot(commands.Bot):
         await self.change_presence(
             activity=discord.Activity(
                 type=discord.ActivityType.watching,
-                name="over the streets",
+                name="Watching over the Punishers",
             )
         )
 
