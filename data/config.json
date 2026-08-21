@@ -1,0 +1,53 @@
+{
+  "welcome": {
+    "enabled": false,
+    "channel_id": "",
+    "title": "Welcome to {server}",
+    "message": "Welcome {member}. We are glad you joined.",
+    "image_url": "",
+    "thumbnail_url": "",
+    "color": "#5865f2"
+  },
+  "role_request": {
+    "enabled": true,
+    "panel_channel_id": "",
+    "submission_channel_id": "",
+    "reviewer_role_id": "",
+    "assign_role_id": "",
+    "panel_title": "Role Request System",
+    "panel_message": "Fill your data correctly from the button.",
+    "panel_image_url": "",
+    "panel_thumbnail_url": "",
+    "button_label": "Submit Request",
+    "button_emoji": "\ud83d\udcdd",
+    "form_title": "Role Request Form",
+    "form_warning": "Do not share passwords or other sensitive information.",
+    "fields": [
+      {
+        "label": "Your Name (In-game name)",
+        "placeholder": "Enter your in-game name",
+        "required": true
+      },
+      {
+        "label": "Your ID",
+        "placeholder": "Enter your character ID",
+        "required": true
+      },
+      {
+        "label": "Level in City",
+        "placeholder": "Enter your current level",
+        "required": true
+      },
+      {
+        "label": "Rank in Family",
+        "placeholder": "Enter your desired rank",
+        "required": true
+      },
+      {
+        "label": "Forum Account Link",
+        "placeholder": "Enter your forum account link",
+        "required": true
+      }
+    ]
+  }
+}

@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Punisher · Bot Control</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+  <body>
+    <main class="shell">
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="mark">P</div>
+          <div>
+            <p class="eyebrow">Punisher Manager</p>
+            <h1>Bot Control</h1>
+          </div>
+        </div>
+        <nav>
+          <button class="tab active" data-tab="welcome"><span class="tab-index">01</span>Welcome</button>
+          <button class="tab" data-tab="role"><span class="tab-index">02</span>Role Request</button>
+          <button class="tab" data-tab="preview"><span class="tab-index">03</span>Preview</button>
+        </nav>
+        <button id="saveBtn" class="save">Save Config</button>
+        <p id="status" class="status">Loading settings…</p>
+      </aside>
+
+      <section class="content">
+        <form id="configForm">
+          <section id="welcome" class="panel active">
+            <div class="panel-head">
+              <h2>Welcome Message</h2>
+              <label class="switch">
+                <input type="checkbox" id="welcomeEnabled">
+                <span></span>
+              </label>
+            </div>
+            <div class="grid two">
+              <label>Welcome Channel ID<input id="welcomeChannel" placeholder="123456789012345678"></label>
+              <label>Embed Color<input id="welcomeColor" type="color" value="#5865F2"></label>
+            </div>
+            <label>Title<input id="welcomeTitle" placeholder="Welcome to {server}"></label>
+            <label>Message<textarea id="welcomeMessage" rows="5" placeholder="Welcome {member}."></textarea></label>
+            <div class="grid two">
+              <label>Image URL<input id="welcomeImage" placeholder="https://..."></label>
+              <label>Thumbnail URL<input id="welcomeThumb" placeholder="https://..."></label>
+            </div>
+          </section>
+
+          <section id="role" class="panel">
+            <div class="panel-head">
+              <h2>Role Request</h2>
+              <label class="switch">
+                <input type="checkbox" id="roleEnabled">
+                <span></span>
+              </label>
+            </div>
+            <div class="grid two">
+              <label>Panel Channel ID<input id="panelChannel" placeholder="Channel for the button panel"></label>
+              <label>Submission Channel ID<input id="submissionChannel" placeholder="Channel for submitted forms"></label>
+              <label>Reviewer Role ID<input id="reviewerRole" placeholder="Role to ping on submission"></label>
+              <label>Requested Role ID<input id="assignRole" placeholder="Role being requested"></label>
+              <label>Embed Color<input id="roleColor" type="color" value="#C81E3A"></label>
+            </div>
+            <label>Panel Title<input id="panelTitle" placeholder="Role Request System"></label>
+            <label>Panel Message<textarea id="panelMessage" rows="4" placeholder="Fill your data correctly from the button."></textarea></label>
+            <div class="grid two">
+              <label>Panel Image URL<input id="panelImage" placeholder="https://..."></label>
+              <label>Panel Thumbnail URL<input id="panelThumb" placeholder="https://..."></label>
+              <label>Button Label<input id="buttonLabel" placeholder="Submit Request"></label>
+              <label>Button Emoji<input id="buttonEmoji" placeholder="📝"></label>
+            </div>
+            <label>Modal Title<input id="formTitle" placeholder="Role Request Form"></label>
+            <label>Warning Text<input id="formWarning" placeholder="Do not share passwords or sensitive info."></label>
+            <div class="field-head">
+              <h3>Form Fields</h3>
+              <button type="button" id="addField">Add Field</button>
+            </div>
+            <div id="fields"></div>
+          </section>
+
+          <section id="preview" class="panel">
+            <div class="panel-head">
+              <h2>Preview</h2>
+            </div>
+            <div class="preview-grid">
+              <article class="discord-card" id="welcomePreview"></article>
+              <article class="discord-card" id="rolePreview"></article>
+            </div>
+          </section>
+        </form>
+      </section>
+    </main>
+    <script src="/app.js"></script>
+  </body>
+</html>
