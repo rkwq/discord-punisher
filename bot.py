@@ -35,7 +35,7 @@ class GeneralBot(commands.Bot):
 
     async def setup_hook(self) -> None:
         for cog in COGS:
-            await self.load_extension(cog)
+            self.load_extension(cog)
 
         if self.settings.sync_commands:
             synced = await self.tree.sync()
@@ -48,8 +48,8 @@ class GeneralBot(commands.Bot):
         logging.info("Logged in as %s (%s)", self.user, self.user.id)
         await self.change_presence(
             activity=discord.Activity(
-                type=discord.ActivityType.listening,
-                name=f"{self.settings.command_prefix}help",
+                type=discord.ActivityType.watching,
+                name="over the streets",
             )
         )
 
