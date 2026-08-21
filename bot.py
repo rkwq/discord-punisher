@@ -48,10 +48,10 @@ class GeneralBot(commands.Bot):
         logging.info("Logged in as %s (%s)", self.user, self.user.id)
         await self.change_presence(
             activity=discord.Activity(
-                type=discord.ActivityType.watching,
-                name="Watching Over Punisher",
+                type=discord.ActivityType.listening,
+                name=f"{self.settings.command_prefix}help",
             )
-)
+        )
 
 
 async def main() -> None:

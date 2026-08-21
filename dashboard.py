@@ -1,3 +1,5 @@
+import base64
+import hmac
 import json
 import os
 import threading
@@ -14,17 +16,13 @@ STATIC_DIR = BASE_DIR / "web"
 
 def create_server() -> ThreadingHTTPServer:
     ensure_config_file()
-    preferred_port = int(os.getenv("DASHBOARD_PORT", "8765"))
-    ports = [preferred_port, 8787, 8888, 9000, 0]
-    last_error: OSError | None = None
-
-    for port in ports:
-        try:
-            return ThreadingHTTPServer(("127.0.0.1", port), DashboardHandler)
-        except OSError as error:
-            last_error = error
-
-    raise RuntimeError("Could not start dashboard server.") from last_error
+    # Render (and most hosts) assign the port via $PORT and only expose that
+    # one port publicly. Fall back to DASHBOARD_PORT for local runs.
+    port = int(os.getenv("PORT") or os.getenv("DASHBOARD_PORT", "8765"))
+    # Bind on all interfaces, not just localhost, so the host's proxy can
+    # reach the server from outside the container.
+    host = os.getenv("DASHBOARD_HOST", "0.0.0.0")
+    return ThreadingHTTPServer((host, port), DashboardHandler)
 
 
 def start_dashboard_in_thread() -> ThreadingHTTPServer:
@@ -36,8 +34,36 @@ def start_dashboard_in_thread() -> ThreadingHTTPServer:
     return server
 
 
+def _check_auth(handler: "DashboardHandler") -> bool:
+    """Require HTTP Basic Auth if DASHBOARD_PASSWORD is set. Skipped locally
+    (no password set) so nothing breaks for people not deploying publicly."""
+    password = os.getenv("DASHBOARD_PASSWORD", "")
+    if not password:
+        return True
+
+    username = os.getenv("DASHBOARD_USERNAME", "admin")
+    header = handler.headers.get("Authorization", "")
+    if header.startswith("Basic "):
+        try:
+            decoded = base64.b64decode(header[6:]).decode("utf-8")
+            sent_user, _, sent_pass = decoded.partition(":")
+        except Exception:
+            sent_user, sent_pass = "", ""
+        if hmac.compare_digest(sent_user, username) and hmac.compare_digest(sent_pass, password):
+            return True
+
+    handler.send_response(401)
+    handler.send_header("WWW-Authenticate", 'Basic realm="Bot Dashboard"')
+    handler.send_header("Content-Length", "0")
+    handler.end_headers()
+    return False
+
+
 class DashboardHandler(BaseHTTPRequestHandler):
     def do_GET(self) -> None:
+        if not _check_auth(self):
+            return
+
         path = urlparse(self.path).path
         if path == "/api/config":
             self.send_json(load_bot_config())
@@ -58,6 +84,9 @@ class DashboardHandler(BaseHTTPRequestHandler):
         self.send_error(404)
 
     def do_POST(self) -> None:
+        if not _check_auth(self):
+            return
+
         path = urlparse(self.path).path
         if path != "/api/config":
             self.send_error(404)
