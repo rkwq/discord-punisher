@@ -35,11 +35,24 @@ class GeneralBot(commands.Bot):
 
     async def setup_hook(self) -> None:
         for cog in COGS:
-            self.load_extension(cog)
+            try:
+                await self.load_extension(cog)
+                logging.info("Loaded cog: %s", cog)
+            except Exception as e:
+                logging.error("Failed to load cog %s: %s", cog, e)
 
         if self.settings.sync_commands:
+            # Sync globally (can take up to 1 hour to appear in Discord)
             synced = await self.tree.sync()
-            logging.info("Synced %s slash commands.", len(synced))
+            logging.info("Synced %s global slash commands.", len(synced))
+
+            # Also sync instantly to a specific guild if GUILD_ID is set
+            guild_id = self.settings.guild_id
+            if guild_id:
+                guild = discord.Object(id=guild_id)
+                self.tree.copy_global_to(guild=guild)
+                guild_synced = await self.tree.sync(guild=guild)
+                logging.info("Synced %s slash commands to guild %s.", len(guild_synced), guild_id)
 
     async def on_ready(self) -> None:
         if self.user is None:
@@ -48,8 +61,8 @@ class GeneralBot(commands.Bot):
         logging.info("Logged in as %s (%s)", self.user, self.user.id)
         await self.change_presence(
             activity=discord.Activity(
-                type=discord.ActivityType.watching,
-                name="Watching over The Punishers",
+                type=discord.ActivityType.listening,
+                name=f"{self.settings.command_prefix}help",
             )
         )
 
