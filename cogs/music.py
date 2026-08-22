@@ -97,8 +97,14 @@ def _build_ytdl_options() -> dict:
         },
     }
     cookies_file = os.getenv("YTDL_COOKIES_FILE", "").strip()
-    if cookies_file and os.path.isfile(cookies_file):
-        opts["cookiefile"] = cookies_file
+    if cookies_file:
+        if os.path.isfile(cookies_file):
+            opts["cookiefile"] = cookies_file
+            print(f"[Music] Using cookies file: {cookies_file}")
+        else:
+            print(f"[Music] WARNING: cookies file not found at '{cookies_file}' — YouTube will block requests.")
+    else:
+        print("[Music] No YTDL_COOKIES_FILE set — YouTube may block requests.")
     return opts
 
 
