@@ -15,6 +15,7 @@ class RoleRequestModal(discord.ui.Modal):
         self.config = config
         self.inputs: list[discord.ui.TextInput] = []
 
+        self.input_labels: list[str] = []
         for index, field in enumerate(config.get("fields", [])[:5]):
             label = str(field.get("label") or f"Field {index + 1}")[:45]
             text_input = discord.ui.TextInput(
@@ -23,6 +24,7 @@ class RoleRequestModal(discord.ui.Modal):
                 required=bool(field.get("required", True)),
                 max_length=300,
             )
+            self.input_labels.append(label)
             self.inputs.append(text_input)
             self.add_item(text_input)
 
@@ -44,8 +46,8 @@ class RoleRequestModal(discord.ui.Modal):
         )
         embed.set_author(name=str(interaction.user), icon_url=interaction.user.display_avatar.url)
 
-        for item in self.inputs:
-            embed.add_field(name=item.label, value=item.value or "Not provided", inline=False)
+        for label, item in zip(self.input_labels, self.inputs):
+            embed.add_field(name=label, value=item.value or "Not provided", inline=False)
 
         assign_role_id = parse_discord_id(self.config.get("assign_role_id"))
         if assign_role_id:
